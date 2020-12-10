@@ -1,4 +1,4 @@
-#!/usr/bin/env python3 
+#!/usr/bin/env python3
 
 print('loading libraries')
 import roslib
@@ -12,7 +12,7 @@ from std_msgs.msg import Float64
 
 amplitude = 1.0
 freq = 2
-cloc_freq = 30
+cloc_freq = 30 * 3
 ang_vel = None
 lin_acc = None
 orientation = None
@@ -39,11 +39,11 @@ if __name__ == '__main__':
   rospy.Subscriber('/cane/sensor', Range, log_sensor)
   shoulder = rospy.Publisher('/cane/shoulder_position_controller/command', Float64, queue_size=10)
 
-    
+
   print('initalizing node')
   rospy.init_node('brain', anonymous=True)
   rate = rospy.Rate(cloc_freq)
-  
+
 
   print('logging data to ~/.ros/' + log_path)
   log = open(log_path, 'w')
@@ -61,12 +61,10 @@ if __name__ == '__main__':
       shoulder.publish(amplitude * sin(clock_counter * freq))
 
       if ang_vel is not None and lin_acc is not None and orientation is not None and sensor_range is not None:
-        log.write('%f %f %f %f %f %f %f %f %f %f %f\n' 
+        log.write('%f %f %f %f %f %f %f %f %f %f %f\n'
           % (clock_counter, ang_vel.x, ang_vel.y, ang_vel.z, lin_acc.x, lin_acc.y, lin_acc.z, orientation.x, orientation.y, orientation.z, sensor_range))
 
       rate.sleep()
   except Exception as e:
     print(e)
   log.close()
-    
-  
